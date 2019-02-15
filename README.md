@@ -1,1 +1,1 @@
-# triangle-puzzle
+# repository of fun little puzzles
