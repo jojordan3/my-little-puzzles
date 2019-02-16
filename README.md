@@ -7,10 +7,11 @@ The first row of the triangle is a single, positive integer, the second row cont
 
 ### Example
 Say we had this triangle:
-
+```
           3
       5       3
   2       5       6
+```
 
 With a target of 45.
 
