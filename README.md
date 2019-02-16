@@ -8,12 +8,12 @@ The first row of the triangle is a single, positive integer, the second row cont
 ### Example
 Say we had this triangle:
 
-         3
-      5    3
-    2    5    6
+          3
+      5       3
+  2       5       6
 
 With a target of 45.
 
-The solution would be 'RL'.
+The solution would be 'RL', so that we would visit 3, 3, and 5 (3*3*5=45).
 
 The TrianglePuzzle class can read puzzles from a .txt file, generate random puzzles, ensure puzzles are valid triangle puzzles, and solve puzzles.

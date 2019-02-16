@@ -32,7 +32,7 @@ class TrianglePuzzle:
 
     Attributes
     ----------------------------------
-    solution : str
+    solution_ : str
         consisting of 'L' and 'R' specifying the steps that solve the puzzle.
     '''
 
@@ -50,7 +50,9 @@ class TrianglePuzzle:
         text_file_path : str
             indicating the path to the text file
 
-        Returns self
+        Returns
+        ----------------------------------
+        self
         '''
         puzzle = open(text_file_path, 'r').readlines()
         triangle = []
@@ -58,7 +60,10 @@ class TrianglePuzzle:
             if line[-1] == '\n':
                 line = line[:-1]
             if line.strip()[0].isdigit():
-                row = [int(s) for s in line.split(',') if s.isdigit()]
+                if ',' in row:
+                    row = [int(s) for s in line.split(',') if s.isdigit()]
+                elif ' ' in row:
+                    row = [int(s) for s in line.split(' ') if s.isdigit()]
                 triangle.append(row)
             else:
                 target = [int(s) for s in line.split(' ') if s.isdigit()]
@@ -85,7 +90,9 @@ class TrianglePuzzle:
             lists consist of positive integers and each list must be one item
             longer than the one previous
 
-        Returns self
+        Returns
+        ----------------------------------
+        self
         '''
         for row, values in enumerate(triangle):
             if len(values) != row + 1:
@@ -109,7 +116,9 @@ class TrianglePuzzle:
         target : int
             must be positive
 
-        Returns self
+        Returns
+        ----------------------------------
+        self
         '''
         try:
             self.target = int(target)
@@ -121,8 +130,11 @@ class TrianglePuzzle:
         '''
         Generates the solution to the puzzle.
 
-        Returns str : the solution to the puzzle consisting of 'L' and 'R'
-        indicating taken as the solution.
+        Returns
+        ----------------------------------
+        self.solution : str
+            the solution to the puzzle consisting of 'L' and 'R' indicating
+            the moves taken in the solution path.
         '''
         # Initiate tracker
         rows = len(self.triangle)
@@ -143,8 +155,8 @@ class TrianglePuzzle:
                 if tracker.current_row == rows:
                     # If the puzzle has been solved, produce the output
                     if self.target == np.prod(tracker.values):
-                        self.solution = ''.join(tracker.output)
-                        return self.solution
+                        self.solution_ = ''.join(tracker.output)
+                        return self.solution_
                     # If we have not reached the target, backtrack
                     else:
                         current_target, tracker = self._backtrack(
@@ -165,7 +177,12 @@ class TrianglePuzzle:
         If false, does the same with moving right. If neither is a possibility,
         backtracks up the triangle.
 
-        Returns current_target : int, tracker : TriangleSolutionTracker
+        Returns
+        ----------------------------------
+        current_target : int
+            dividend of self.target and values visited in the current path
+        tracker : TriangleSolutionTracker
+            current state of the solution tracker
         '''
         if not backtrack:
             valueL = self.triangle[tracker.current_row][
@@ -176,10 +193,6 @@ class TrianglePuzzle:
                 current_target = current_target / valueL
                 tracker._make_move(value=valueL, direction='L')
                 return current_target, tracker
-            else:
-                pass
-        else:
-            pass
 
         valueR = self.triangle[tracker.current_row][
             tracker.current_position + 1]
@@ -200,7 +213,12 @@ class TrianglePuzzle:
         Helper function to self.solve(). When the solver hits a dead end,
         retraces steps to the first possible change.
 
-        Returns current_target : int, tracker : TriangleSolutionTracker
+        Returns
+        ----------------------------------
+        current_target : int
+            dividend of self.target and values visited in the current path
+        tracker : TriangleSolutionTracker
+            current state of the solution tracker
         '''
 
         # The solution function will always try to move left before it tries
@@ -226,6 +244,142 @@ class TrianglePuzzle:
                 tracker=tracker, current_target=current_target, backtrack=True)
         # Return
         return current_target, tracker
+
+    def puzzle_to_txt(self, path, show_soution=False, spacing=4,
+                      line_spacing=1):
+        '''
+        Saves the puzzle to a .txt file
+
+        Parameters
+        ----------------------------------
+        path : str
+            indicates the path to the file to which you want to save the puzzle
+        show_solution : bool, default=False
+            indicates whether or not to include the solution in the .txt file
+        spacing : int, default=4
+            indicates the degree of spacing between consecutive values a same
+            row of the triangle
+        line_spacing : int, default=1
+            indicates the degree of spacing between rows of the triangle and
+            between the target, triangle, and solution
+        '''
+        to_txt = self.display(show_solution=show_solution, spacing=spacing,
+                              line_spacing=line_spacing)
+        txt_file = open(path, 'w+')
+        txt_file.write(to_txt)
+        txt_file.close()
+        return None
+
+    def puzzle_key_to_txt(self, path_to_puzzle, path_to_solution, spacing=4,
+                          line_spacing=1):
+        '''
+        Saves the puzzle without the solution in one .txt file and the puzzle
+        with the solution in a separate .txt file.
+
+        Parameters
+        ----------------------------------
+        path_to_puzzle : str
+            indicates the path to the file to which you want to save the puzzle
+        path_to_solution : str
+            indicates the path to the file to which you want to save the
+            puzzle with the answer key
+        spacing : int, default=4
+            indicates the degree of spacing between consecutive values a same
+            row of the triangle
+        line_spacing : int, default=1
+            indicates the degree of spacing between rows of the triangle and
+            between the target, triangle, and solution
+        '''
+        self.puzzle_to_txt(path=path_to_puzzle, spacing=spacing,
+                           line_spacing=line_spacing)
+        self.puzzle_to_txt(path=path_to_solution, spacing=spacing,
+                           line_spacing=line_spacing)
+        return None
+
+    def display(self, show_solution=False, spacing=4, line_spacing=1):
+        '''
+        Sets up the puzzle in an easily readable format. Ready to play or to
+        check the solution. Prints the output.
+
+        Parameters
+        ----------------------------------
+        show_solution : bool, default=False
+            indicates whether or not to include the solution in the printout
+            and output
+        spacing : int, default=4
+            indicates the degree of spacing between consecutive values a same
+            row of the triangle
+        line_spacing : int, default=1
+            indicates the degree of spacing between rows of the triangle and
+            between the target, triangle, and solution
+
+        Returns
+        ----------------------------------
+        puzzle_str : str
+            nicely formatted string that includes the target and triangle and
+            (optionally) the solution
+        '''
+        if self.target:
+            target_str = f'Target: {self.target}' + ('\n' * line_spacing)
+            print(target_str)
+        else:
+            target_str = ''
+
+        if self.triangle:
+            rows = len(self.triangle)
+            triangle_str = ''
+            indents = rows - 1
+            for i, row in enumerate(rows):
+                row_indent = indents - i
+                for j, value in enumerate(row):
+                    if j == 0:
+                        triangle_str += _make_indent(value, spacing=spacing
+                                                     row_indent=row_indent)
+                    else:
+                        triangle_str += _make_indent(value, prev=row[j - 1],
+                                                     spacing=spacing)
+                    triangle_str += str(value)
+                triangle_str += ('\n' * line_spacing)
+            print(triangle_str)
+        else:
+            triangle_str = ''
+
+        if show_solution and self.solution_:
+            solution_str = f'Solution: {self.solution_}\n'
+            print(solution_str)
+        else:
+            solution_str = ''
+
+        puzzle_str = target_str + triangle_str + solution_str
+        return puzzle_str
+
+    def _make_indent(value, spacing=4, prev=None, row_indent=None):
+        '''
+        Helper function for self.display. Determines the whitespace preceeding
+        items in each row.
+        '''
+        if not prev and not row_indent:
+            raise ValueError('Must provide a prev value or row_indent index')
+
+        item_len = len(str(value))
+
+        # determine baselien value of decrease from standard spacing
+        if item_len <= 2:
+            decrease = 0
+        else:
+            decrease = ((item_len - 1) // 2)
+
+        # row_indent is used when the item is the first in its row
+        if row_indent:
+            indent = (' ' * (spacing * row_indent)) - (' ' * decrease)
+            return indent
+
+        # prev indicates the previous value in the row
+        if prev:
+            prev_len = len(str(prev))
+            decrease += ((prev_len // 2) + 1)
+            indent = (' ' * spacing) - (' ' * decrease)
+            return indent
 
     def make_random(self, n_rows=5, level=None):
         '''
