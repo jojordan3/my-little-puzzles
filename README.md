@@ -16,4 +16,4 @@ With a target of 45.
 
 The solution would be 'RL', so that we would visit 3, 3, and 5 (3*3*5=45).
 
-The TrianglePuzzle class can read puzzles from a .txt file, generate random puzzles, ensure puzzles are valid triangle puzzles, and solve puzzles.
+The TrianglePuzzle class can read puzzles from a .txt file, generate random puzzles, ensure puzzles are valid triangle puzzles, and solve puzzles. It can also write puzzles and solutions to .txt files.
