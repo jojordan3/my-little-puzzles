@@ -1,20 +1,56 @@
+'''
+The triangle puzzle and solver.
+'''
+
 import numpy as np
 from collections import defaultdict
 
 
 class TrianglePuzzle:
     '''
-    DOCSTRING HERE
+    The objective of this puzzle is to find the path from the number at the
+    top of the triangle all down to the bottom row such that the product of all
+    the values visited is equal to the target number.
+
+    This puzzle is set up such that the first row contains one positive
+    integer, the second row contains two positive integers, and so on, creating
+    a triangle. Starting from the initial position at the top of the triangle,
+    the player continually moves down one row by moving to the value down and
+    to the left of the current position, or down and to the right of the
+    current position--until the player reaches the bottom row. In this way,
+    the player visits the same number of values as there are rows in the
+    triangle. The player must find the path that makes the product of all the
+    values visited equal to the specified target value.
+
+    Parameters
+    ----------------------------------
+    triangle : list of lists
+        lists consist of positive integers and each list must be one item
+        longer than the one previous
+    target : int (positive)
+        must define a unique path down the triangle
+
+    Attributes
+    ----------------------------------
+    solution : str
+        consisting of 'L' and 'R' specifying the steps that solve the puzzle.
     '''
 
-    def __init__(self, triangle=None, target=None, solution=None):
+    def __init__(self, triangle=None, target=None):
         self.triangle = triangle
         self.target = target
-        self.solution = solution
+        self.solution_ = None
 
     def read_txt_file(self, text_file_path):
         '''
-        DOCSTRING HERE
+        Get the triangle from a text file.
+
+        Parameters
+        ----------------------------------
+        text_file_path : str
+            indicating the path to the text file
+
+        Returns self
         '''
         puzzle = open(text_file_path, 'r').readlines()
         triangle = []
@@ -40,7 +76,16 @@ class TrianglePuzzle:
 
     def set_triangle(self, triangle):
         '''
-        DOCSTRING HERE
+        Sets the triangle parameter of the puzzle and ensures it is in a valid
+        form.
+
+        Parameters
+        ----------------------------------
+        triangle : list of lists
+            lists consist of positive integers and each list must be one item
+            longer than the one previous
+
+        Returns self
         '''
         for row, values in enumerate(triangle):
             if len(values) != row + 1:
@@ -56,7 +101,15 @@ class TrianglePuzzle:
 
     def set_target(self, target):
         '''
-        DOCSTRING HERE
+        Sets the target parameter of the puzzle and ensures it is a positive
+        int.
+
+        Parameters
+        ----------------------------------
+        target : int
+            must be positive
+
+        Returns self
         '''
         try:
             self.target = int(target)
@@ -66,7 +119,10 @@ class TrianglePuzzle:
 
     def solve(self):
         '''
-        DOCSTRING HERE
+        Generates the solution to the puzzle.
+
+        Returns str : the solution to the puzzle consisting of 'L' and 'R'
+        indicating taken as the solution.
         '''
         # Initiate tracker
         rows = len(self.triangle)
@@ -102,6 +158,15 @@ class TrianglePuzzle:
                         backtrack=False)
 
     def _next_move(self, tracker, current_target, backtrack=False):
+        '''
+        Helper function for self.solve(). Determines the next move to make.
+        Checks if moving left will land on a value that is a factor of the
+        current target. If true, updates TriangleSolutionTracker attributes.
+        If false, does the same with moving right. If neither is a possibility,
+        backtracks up the triangle.
+
+        Returns current_target : int, tracker : TriangleSolutionTracker
+        '''
         if not backtrack:
             valueL = self.triangle[tracker.current_row][
                 tracker.current_position]
@@ -132,7 +197,10 @@ class TrianglePuzzle:
 
     def _backtrack(self, tracker):
         '''
-        DOCSTRING HERE
+        Helper function to self.solve(). When the solver hits a dead end,
+        retraces steps to the first possible change.
+
+        Returns current_target : int, tracker : TriangleSolutionTracker
         '''
 
         # The solution function will always try to move left before it tries
@@ -161,9 +229,18 @@ class TrianglePuzzle:
 
     def make_random(self, n_rows=5, level=None):
         '''
-        DOCSTRING HERE
+        Constructs a random triangle puzzle that has a single, valid solution.
+
+        Parameters
+        ----------------------------------
+        n_rows : int
+            a number between 2 and 12 inclusive
+        level : str
+            options are 'easy', 'medium', and 'hard'
+
+        Returns self
         '''
-        if n_rows > 10:
+        if n_rows >= 12:
             raise ValueError('The maximum number of rows allowed is 11.')
         if not level:
             max_value = 3 * n_rows
@@ -195,7 +272,10 @@ class TrianglePuzzle:
 
     def _is_valid_puzzle(self):
         '''
-        DOCSTRING HERE
+        Checks that the puzzle is valid with a single, unique solution.
+
+        Returns self, possible_targets : list of ints that could be valid
+            targets to the puzzle.
         '''
         possible_products = defaultdict(int)
         n_moves = len(self.triangle) - 1
@@ -230,26 +310,31 @@ class TrianglePuzzle:
 
 class TriangleSolutionTracker:
     '''
-    DOCSTRING HERE
+    Tracker to hold information regarding the state of the puzzle solver.
+
+    Attributes
+    ----------------------------------
+    output : list
+        list of type str ('L' and 'R') indicating moves taken by the solver in
+        its current path.
+    values : list
+        list of type int indicating values visited along its current path
+    current_position : int
+    current_row : int
     '''
 
-    def __init__(self, output=None, values=None, current_position=0,
-                 current_row=0):
-        if output:
-            self.output = output
-        else:
-            self.output = []
-        if values:
-            self.values = values
-        else:
-            self.values = []
+    def __init__(self):
+        self.output = []
+        self.values = []
         self.current_position = 0
         self.current_row = 0
 
     def _update(self, values=None, output=None,
                 current_position=None, current_row=None):
         '''
-        DOCSTRING HERE
+        Function to update the parameters of the solution tracker.
+
+        Returns self
         '''
         if values:
             self.values = values
@@ -263,7 +348,17 @@ class TriangleSolutionTracker:
 
     def _make_move(self, value, direction=None):
         '''
-        DOCSTRING HERE
+        Function to update the parameters of the solution tracker based on
+        move determined by the solver.
+
+        Parameters
+        ----------------------------------
+        value : int
+            the next value being added to the path
+        direction : str
+            either 'L' or 'R' indicating the direction to move.
+
+        Returns self
         '''
         self.values.append(value)
         self.current_row += 1
