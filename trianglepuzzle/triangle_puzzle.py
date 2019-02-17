@@ -245,7 +245,7 @@ class TrianglePuzzle:
         # Return
         return current_target, tracker
 
-    def puzzle_to_txt(self, path, show_soution=False, spacing=4,
+    def puzzle_to_txt(self, path, show_solution=False, spacing=4,
                       line_spacing=1):
         '''
         Saves the puzzle to a .txt file
@@ -333,7 +333,7 @@ class TrianglePuzzle:
                 row_indent = indents - i
                 for j, value in enumerate(row):
                     if j == 0:
-                        triangle_str += _make_indent(value, spacing=spacing
+                        triangle_str += _make_indent(value, spacing=spacing,
                                                      row_indent=row_indent)
                     else:
                         triangle_str += _make_indent(value, prev=row[j - 1],
@@ -353,34 +353,6 @@ class TrianglePuzzle:
         puzzle_str = target_str + triangle_str + solution_str
         return puzzle_str
 
-    def _make_indent(value, spacing=4, prev=None, row_indent=None):
-        '''
-        Helper function for self.display. Determines the whitespace preceeding
-        items in each row.
-        '''
-        if not prev and not row_indent:
-            raise ValueError('Must provide a prev value or row_indent index')
-
-        item_len = len(str(value))
-
-        # determine baselien value of decrease from standard spacing
-        if item_len <= 2:
-            decrease = 0
-        else:
-            decrease = ((item_len - 1) // 2)
-
-        # row_indent is used when the item is the first in its row
-        if row_indent:
-            indent = (' ' * (spacing * row_indent)) - (' ' * decrease)
-            return indent
-
-        # prev indicates the previous value in the row
-        if prev:
-            prev_len = len(str(prev))
-            decrease += ((prev_len // 2) + 1)
-            indent = (' ' * spacing) - (' ' * decrease)
-            return indent
-
     def make_random(self, n_rows=5, level=None):
         '''
         Constructs a random triangle puzzle that has a single, valid solution.
@@ -399,9 +371,9 @@ class TrianglePuzzle:
         if not level:
             max_value = 3 * n_rows
         else:
-            assert level in set(['easy', 'medium', 'hard']),
-            'Options for level are \'easy\', \'medium\', or \'hard\'.'
-        elif level == 'easy':
+            assert (level in set(['easy', 'medium', 'hard']),\
+            'Options for level are \'easy\', \'medium\', or \'hard\'.')
+        if level == 'easy':
             max_value = 2 * n_rows
         elif level == 'medium':
             max_value = 3 * n_rows
@@ -460,6 +432,34 @@ class TrianglePuzzle:
                 return False, None
             else:
                 return True, possible_targets
+
+def _make_indent(value, spacing=4, prev=None, row_indent=None):
+    '''
+    Helper function for TrianglePuzzle.display(). Determines the whitespace preceeding
+    items in each row.
+    '''
+    if not prev and not row_indent:
+        raise ValueError('Must provide a prev value or row_indent index')
+
+    item_len = len(str(value))
+
+    # determine baselien value of decrease from standard spacing
+    if item_len <= 2:
+        decrease = 0
+    else:
+        decrease = ((item_len - 1) // 2)
+
+    # row_indent is used when the item is the first in its row
+    if row_indent:
+        indent = (' ' * ((spacing * row_indent) - decrease))
+        return indent
+
+    # prev indicates the previous value in the row
+    if prev:
+        prev_len = len(str(prev))
+        decrease += ((prev_len // 2) + 1)
+        indent = (' ' * ((spacing * 2) - decrease))
+        return indent
 
 
 class TriangleSolutionTracker:
