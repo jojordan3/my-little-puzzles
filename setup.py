@@ -5,7 +5,7 @@ Package setup/installation and metadata for my-little-puzzles
 import setuptools
 
 REQUIRED = [
-    'numpy',
+    'numpy'
 ]
 
 with open('README.md', 'r') as fh:
@@ -13,7 +13,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='my-little-puzzles',
-    version='0.0.1',
+    version='0.0.2',
     author='jojordan3',
     description='A collection of fun little number puzzles.',
     long_description=LONG_DESCRIPTION,
