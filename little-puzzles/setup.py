@@ -13,7 +13,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='little-puzzles',
-    version='0.0.2',
+    version='0.0.3',
     author='jojordan3',
     description='A collection of fun little number puzzles.',
     long_description=LONG_DESCRIPTION,
