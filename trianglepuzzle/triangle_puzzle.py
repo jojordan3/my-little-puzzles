@@ -371,8 +371,8 @@ class TrianglePuzzle:
         if not level:
             max_value = 3 * n_rows
         else:
-            assert (level in set(['easy', 'medium', 'hard']),\
-            'Options for level are \'easy\', \'medium\', or \'hard\'.')
+            assert (level in set(['easy', 'medium', 'hard']),
+                    'Options for level are \'easy\', \'medium\', or \'hard\'.')
         if level == 'easy':
             max_value = 2 * n_rows
         elif level == 'medium':
@@ -433,10 +433,11 @@ class TrianglePuzzle:
             else:
                 return True, possible_targets
 
+
 def _make_indent(value, spacing=4, prev=None, row_indent=None):
     '''
-    Helper function for TrianglePuzzle.display(). Determines the whitespace preceeding
-    items in each row.
+    Helper function for TrianglePuzzle.display(). Determines the whitespace
+    preceeding items in each row.
     '''
     if not prev and not row_indent:
         raise ValueError('Must provide a prev value or row_indent index')
