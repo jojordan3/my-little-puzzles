@@ -12,10 +12,10 @@ with open('README.md', 'r') as fh:
     LONG_DESCRIPTION = fh.read()
 
 setuptools.setup(
-    name='my-little-puzzles',
-    version='0.0.2',
+    name='little-puzzles',
+    version='0.0.3',
     author='jojordan3',
-    description='A collection of fun little number puzzles.',
+    description='A collection of number puzzle generators and solvers.',
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
     url='https://github.com/jojordan3/my-little-puzzles',
